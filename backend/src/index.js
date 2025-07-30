@@ -28,7 +28,10 @@ app.use("/api/message", messageRoutes);
 if(process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../frontend/dist")))
 
-    app.get("*", (_, res) => {
+    app.get("*", (req, res, next) => {
+        const isApi = req.path.startsWith("/api/");
+        const isStatic = req.path.includes(".");
+        if (isApi || isStatic) return next();
         res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
     });
 }
